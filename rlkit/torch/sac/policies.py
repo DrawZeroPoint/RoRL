@@ -50,7 +50,7 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
         self.std = std
         if std is None:
             last_hidden_size = obs_dim
-            if len(hidden_sizes) > 0:
+            if hidden_sizes:
                 last_hidden_size = hidden_sizes[-1]
             self.last_fc_log_std = nn.Linear(last_hidden_size, action_dim)
             self.last_fc_log_std.weight.data.uniform_(-init_w, init_w)
@@ -75,6 +75,7 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
     ):
         """
         :param obs: Observation
+        :param reparameterize:
         :param deterministic: If True, do not sample
         :param return_log_prob: If True, return a sample and its log probability
         """
@@ -87,8 +88,8 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
             log_std = torch.clamp(log_std, LOG_SIG_MIN, LOG_SIG_MAX)
             std = torch.exp(log_std)
         else:
-            std = self.std
             log_std = self.log_std
+            std = self.std
 
         log_prob = None
         entropy = None
@@ -99,7 +100,7 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
         else:
             tanh_normal = TanhNormal(mean, std)
             if return_log_prob:
-                if reparameterize is True:
+                if reparameterize:
                     action, pre_tanh_value = tanh_normal.rsample(
                         return_pretanh_value=True
                     )
@@ -113,7 +114,7 @@ class TanhGaussianPolicy(Mlp, ExplorationPolicy):
                 )
                 log_prob = log_prob.sum(dim=1, keepdim=True)
             else:
-                if reparameterize is True:
+                if reparameterize:
                     action = tanh_normal.rsample()
                 else:
                     action = tanh_normal.sample()
@@ -130,5 +131,4 @@ class MakeDeterministic(nn.Module, Policy):
         self.stochastic_policy = stochastic_policy
 
     def get_action(self, observation):
-        return self.stochastic_policy.get_action(observation,
-                                                 deterministic=True)
+        return self.stochastic_policy.get_action(observation, deterministic=True)

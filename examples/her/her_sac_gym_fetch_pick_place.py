@@ -11,51 +11,54 @@ from rlkit.torch.sac.sac import SACTrainer
 from rlkit.torch.torch_rl_algorithm import TorchBatchRLAlgorithm
 
 
-def experiment(variant):
-    # unwrap the TimeLimitEnv wrapper since we manually terminate after 50 steps
-    eval_env = gym.make('FetchReach-v1').env
-    expl_env = gym.make('FetchReach-v1').env
+def experiment(args):
+    eval_env = gym.make('FetchPickAndPlace-v1').env
+    expl_env = gym.make('FetchPickAndPlace-v1').env
 
     observation_key = 'observation'
     desired_goal_key = 'desired_goal'
+    achieved_goal_key = 'achieved_goal'
 
-    achieved_goal_key = desired_goal_key.replace("desired", "achieved")
     replay_buffer = ObsDictRelabelingBuffer(
         env=eval_env,
         observation_key=observation_key,
         desired_goal_key=desired_goal_key,
         achieved_goal_key=achieved_goal_key,
-        **variant['replay_buffer_kwargs']
+        **args['replay_buffer_kwargs']
     )
+
     obs_dim = eval_env.observation_space.spaces['observation'].low.size
     action_dim = eval_env.action_space.low.size
     goal_dim = eval_env.observation_space.spaces['desired_goal'].low.size
+
     qf1 = FlattenMlp(
         input_size=obs_dim + action_dim + goal_dim,
         output_size=1,
-        **variant['qf_kwargs']
+        **args['qf_kwargs']
     )
     qf2 = FlattenMlp(
         input_size=obs_dim + action_dim + goal_dim,
         output_size=1,
-        **variant['qf_kwargs']
+        **args['qf_kwargs']
     )
     target_qf1 = FlattenMlp(
         input_size=obs_dim + action_dim + goal_dim,
         output_size=1,
-        **variant['qf_kwargs']
+        **args['qf_kwargs']
     )
     target_qf2 = FlattenMlp(
         input_size=obs_dim + action_dim + goal_dim,
         output_size=1,
-        **variant['qf_kwargs']
+        **args['qf_kwargs']
     )
+
     policy = TanhGaussianPolicy(
         obs_dim=obs_dim + goal_dim,
         action_dim=action_dim,
-        **variant['policy_kwargs']
+        **args['policy_kwargs']
     )
     eval_policy = MakeDeterministic(policy)
+
     trainer = SACTrainer(
         env=eval_env,
         policy=policy,
@@ -63,9 +66,10 @@ def experiment(variant):
         qf2=qf2,
         target_qf1=target_qf1,
         target_qf2=target_qf2,
-        **variant['sac_trainer_kwargs']
+        **args['sac_trainer_kwargs']
     )
     trainer = HERTrainer(trainer)
+
     eval_path_collector = GoalConditionedPathCollector(
         eval_env,
         eval_policy,
@@ -85,14 +89,14 @@ def experiment(variant):
         exploration_data_collector=expl_path_collector,
         evaluation_data_collector=eval_path_collector,
         replay_buffer=replay_buffer,
-        **variant['algo_kwargs']
+        **args['algo_kwargs']
     )
     algorithm.to(ptu.device)
     algorithm.train()
 
 
 if __name__ == "__main__":
-    variant = dict(
+    args = dict(
         algorithm='HER-SAC',
         version='normal',
         algo_kwargs=dict(
@@ -125,5 +129,5 @@ if __name__ == "__main__":
             hidden_sizes=[400, 300],
         ),
     )
-    setup_logger('her-sac-fetch-experiment', variant=variant)
-    experiment(variant)
+    setup_logger('her-sac-fetch-pick-place-experiment', variant=args)
+    experiment(args)

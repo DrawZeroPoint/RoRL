@@ -1,4 +1,4 @@
-name: rlkit
+name: rorl
 channels:
 - kne  # for pybox2d
 - pytorch

@@ -75,7 +75,7 @@ def multitask_rollout(
 
 def rollout(
         env,
-        agent,
+        policy,
         max_path_length=np.inf,
         render=False,
         render_kwargs=None,
@@ -103,13 +103,15 @@ def rollout(
     agent_infos = []
     env_infos = []
     o = env.reset()
-    agent.reset()
+    policy.reset()
     next_o = None
     path_length = 0
     if render:
         env.render(**render_kwargs)
     while path_length < max_path_length:
-        a, agent_info = agent.get_action(o)
+        o_np = np.concatenate((o['observation'], o['desired_goal']), axis=0)
+        obs_np = {None: np.expand_dims(o_np, axis=0)}
+        a, agent_info = policy.get_action(obs_np)
         next_o, r, d, env_info = env.step(a)
         observations.append(o)
         rewards.append(r)

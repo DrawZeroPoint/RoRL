@@ -1,5 +1,5 @@
 """
-General networks for pytorch.
+General networks for PyTorch.
 
 Algorithm-specific networks should go else-where.
 """
@@ -42,15 +42,18 @@ class Mlp(nn.Module):
         self.hidden_activation = hidden_activation
         self.output_activation = output_activation
         self.layer_norm = layer_norm
+
         self.fcs = []
         self.layer_norms = []
         in_size = input_size
 
         for i, next_size in enumerate(hidden_sizes):
+            # Create fC layer and init its weights and bias
             fc = nn.Linear(in_size, next_size)
-            in_size = next_size
             hidden_init(fc.weight)
             fc.bias.data.fill_(b_init_value)
+            in_size = next_size
+
             self.__setattr__("fc{}".format(i), fc)
             self.fcs.append(fc)
 
@@ -63,7 +66,7 @@ class Mlp(nn.Module):
         self.last_fc.weight.data.uniform_(-init_w, init_w)
         self.last_fc.bias.data.uniform_(-init_w, init_w)
 
-    def forward(self, input, return_preactivations=False):
+    def forward(self, input: torch.Tensor, return_preactivations=False):
         h = input
         for i, fc in enumerate(self.fcs):
             h = fc(h)
