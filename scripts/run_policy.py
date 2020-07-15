@@ -1,4 +1,4 @@
-from rlkit.samplers.rollout_functions import rollout
+from rlkit.samplers.rollout_functions import rollout, multitask_rollout
 from rlkit.torch.pytorch_util import set_gpu_mode
 import argparse
 import torch
@@ -17,11 +17,13 @@ def simulate_policy(args):
         set_gpu_mode(True)
         policy.cuda()
     while True:
-        path = rollout(
+        path = multitask_rollout(
             env,
             policy,
             max_path_length=args.H,
             render=True,
+            observation_key='observation',
+            desired_goal_key='desired_goal',
         )
         if hasattr(env, "log_diagnostics"):
             env.log_diagnostics([path])
@@ -32,7 +34,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('file', type=str,
                         help='path to the snapshot file')
-    parser.add_argument('--H', type=int, default=10,
+    parser.add_argument('--H', type=int, default=50,
                         help='Max length of rollout')
     parser.add_argument('--gpu', action='store_true')
     args = parser.parse_args()
