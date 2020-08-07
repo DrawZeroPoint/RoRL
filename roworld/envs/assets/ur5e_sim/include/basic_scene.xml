@@ -1,0 +1,43 @@
+<mujocoinclude>
+    <!-- =================================================
+        Copyright 2020 Zhipeng Dong
+        Model   :: UR5e 2F-85 pick (MuJoCoV2.0)
+        Author  :: Zhipeng Dong (zhipengdongneu@gmail.com)
+        License :: Under Apache License, Version 2.0 (the "License")
+    ====================================================== -->
+
+    <visual>
+        <!-- Increase the value smooth the shadow, default 1024 -->
+        <quality shadowsize="10240" />
+        <map znear="0.005" />
+    </visual>
+
+    <asset>
+        <texture type="skybox" builtin="gradient" rgb1="1 1 1" rgb2=".4 .6 .6" width="32" height="32"/>
+
+        <texture name="T_ground" type="2d" builtin="checker" rgb1=".3 .4 .5" rgb2=".6 0.6 0.6"
+                 width="512" height="512"/>
+        <material name="M_ground" reflectance="0.1" texture="T_ground" texrepeat="1 1" texuniform="true"/>
+
+        <texture name="T_table" type="cube" builtin="flat" rgb1=".71 .72 .73" rgb2=".71 .72 .73"
+                 width="2" height="2"/>
+        <material name="M_table" reflectance="0.8" texture="T_table" texuniform="false"/>
+
+        <texture name="T_metal" type="cube" file="metal2.png"/>
+        <material name="M_metal" texture="T_metal" shininess="0.1" specular="0.5" reflectance="0.2"/>
+    </asset>
+
+    <worldbody>
+        <light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 30" dir="0 0 -1"/>
+        <geom name="ground" pos="0 0 0" size="2 2 4" material="M_ground" type="plane" contype="1" conaffinity="1"/>
+        <geom name="table" pos="0 0 0.8" size="0.5 0.5 0.02" material="M_table" type="box" contype="1" conaffinity="1"/>
+
+        <!-- Add a cube on top of the table -->
+        <body name="object" pos="0 0 0.88">
+            <freejoint name="object_joint" />
+            <geom size=".04 .04 .04" pos ="0 0 0" type="box" material="M_metal"/>
+            <inertial pos="0 0 0" mass="100" diaginertia="0.3 0.3 0.3" />
+        </body>
+
+    </worldbody>
+</mujocoinclude>

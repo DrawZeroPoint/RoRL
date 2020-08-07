@@ -1,0 +1,67 @@
+<mujocoinclude>
+    <!-- =================================================
+        Copyright 2020 Zhipeng Dong
+        Model   :: UR5e 2F-85 pick (MuJoCoV2.0)
+        Author  :: Zhipeng Dong (zhipengdongneu@gmail.com)
+        License :: Under Apache License, Version 2.0 (the "License")
+    ====================================================== -->
+
+    <compiler angle="radian"/>
+    <!-- <option timestep="0.002" noslip_iterations="20"/> -->
+    <option timestep="0.002"/>
+<!--    <size nuser_actuator="5"/>-->
+
+    <asset>
+        <!-- Robot Meshes (UR5e) -->
+        <mesh name="V_base" file="visual/base.stl" />
+        <mesh name="V_shoulder" file="visual/shoulder.stl" />
+        <mesh name="V_upperarm" file="visual/upperarm.stl" />
+        <mesh name="V_forearm" file="visual/forearm.stl" />
+        <mesh name="V_wrist1" file="visual/wrist1.stl" />
+        <mesh name="V_wrist2" file="visual/wrist2.stl" />
+        <mesh name="V_wrist3" file="visual/wrist3.stl" />
+        <mesh name="C_base" file="collision/base.stl" />
+        <mesh name="C_shoulder" file="collision/shoulder.stl" />
+        <mesh name="C_upperarm" file="collision/upperarm.stl" />
+        <mesh name="C_forearm" file="collision/forearm.stl" />
+        <mesh name="C_wrist1" file="collision/wrist1.stl" />
+        <mesh name="C_wrist2" file="collision/wrist2.stl" />
+        <mesh name="C_wrist3" file="collision/wrist3.stl" />
+        <!-- Gripper Meshes (Robotiq 2F85) -->
+        <mesh file="kinova_robotiq_coupler.stl" />
+        <mesh file="robotiq_85_base_link.stl" />
+        <mesh file="robotiq_85_finger_link.stl" />
+        <mesh file="robotiq_85_finger_tip_link.stl" />
+        <mesh file="robotiq_85_inner_knuckle_link.stl" />
+        <mesh file="robotiq_85_knuckle_link.stl" />
+        <!--Textures-->
+        <texture name="T_robot" type="cube" builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" />
+        <texture name="T_gripper" type="cube" builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" rgb2="0 0 0"/>
+        <!--Materials-->
+        <material name="M_robot" texture="T_robot" shininess="0.9" specular="0.75" reflectance="0.3"/>
+        <material name="M_gripper" texture="T_gripper" shininess="0.9" specular="0.75" reflectance="0.4"/>
+        <material name="M_light" specular="0" shininess="0.6" reflectance="0.9" rgba="0.5 0.5 1 1" emission="0.7" />
+    </asset>
+
+    <default>
+        <motor gear="50"/>
+        <joint limited="true" damping="1" />
+
+        <default class="D_robot">
+            <position forcelimited="true" ctrllimited="true" />
+            <default class="D_robot_visual">
+                <geom material="M_robot" contype="0" conaffinity="0" group="1" type="mesh" rgba="0.6 0.96 1 1" />
+            </default>
+            <default class="D_robot_collision">
+                <geom material="M_robot" contype="1" conaffinity="1" group="3" type="mesh" rgba=".5 .6 .7 1"/>
+            </default>
+        </default>
+
+        <default class="D_gripper">
+            <joint damping="100" armature='5'/>
+            <geom friction="1 0.5 0.0001" solref="0.01 1" solimp="0.8 0.9 0.001" margin="0.001" user="0"
+                  rgba="0.5 0.6 0.7 .4" contype="1" conaffinity="0" condim="6" group="1" />
+        </default>
+    </default>
+
+</mujocoinclude>

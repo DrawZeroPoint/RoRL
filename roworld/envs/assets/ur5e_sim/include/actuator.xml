@@ -1,0 +1,24 @@
+<mujocoinclude>
+    <!-- =================================================
+        Copyright 2020 Zhipeng Dong
+        Model   :: UR5e 2F-85 pick (MuJoCoV2.0)
+        Author  :: Zhipeng Dong (zhipengdongneu@gmail.com)
+        License :: Under Apache License, Version 2.0 (the "License")
+    ====================================================== -->
+
+    <equality>
+        <joint joint1="joint7_1" joint2="joint7_2" polycoef="0 1 0 0 0"/>
+    </equality>
+
+    <actuator>
+        <motor ctrllimited="true" ctrlrange="-2 2" joint='shoulder_pan_joint' /> <!--range -150 150-->
+        <motor ctrllimited="true" ctrlrange="-2 2" joint='shoulder_lift_joint'/>
+        <motor ctrllimited="true" ctrlrange="-2 2" joint='elbow_joint'  />
+        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_1_joint' />  <!--range -28 28-->
+        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_2_joint' />
+        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_3_joint' />
+        <motor ctrllimited="true" ctrlrange="-1 1" joint='joint7_1' />
+        <motor ctrllimited="true" ctrlrange="-1 1" joint='joint7_2' />
+    </actuator>
+
+</mujocoinclude>

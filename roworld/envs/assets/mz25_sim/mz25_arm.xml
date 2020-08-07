@@ -1,0 +1,60 @@
+<mujoco model="mz25">
+    <compiler angle="radian" meshdir="/home/dzp/RoRL/roworld/envs/assets/meshes/mz25/" />
+    <size njmax="500" nconmax="100" />
+    <asset>
+        <mesh name="link0" file="collision/link0.stl" />
+        <mesh name="link1" file="collision/link1.stl" />
+        <mesh name="link2" file="collision/link2.stl" />
+        <mesh name="link3" file="collision/link3.stl" />
+        <mesh name="link4" file="collision/link4.stl" />
+        <mesh name="link5" file="collision/link5.stl" />
+        <mesh name="link6" file="collision/link6.stl" />
+        <mesh name="link0_v" file="visual/link0.stl" />
+        <mesh name="link1_v" file="visual/link1.stl" />
+        <mesh name="link2_v" file="visual/link2.stl" />
+        <mesh name="link3_v" file="visual/link3.stl" />
+        <mesh name="link4_v" file="visual/link4.stl" />
+        <mesh name="link5_v" file="visual/link5.stl" />
+        <mesh name="link6_v" file="visual/link6.stl" />
+    </asset>
+    <worldbody>
+        <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link0_v" />
+        <geom type="mesh" mesh="link0" />
+        <body name="mz25_link1" pos="0 0 0.2495">
+            <inertial pos="0 0 0" mass="2.34" diaginertia="0.3 0.3 0.3" />
+            <joint name="mz25_joint1" pos="0 0 0" axis="0 0 1" limited="true" range="-2.97 2.97" damping="1" />
+            <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link1_v" />
+            <geom type="mesh" mesh="link1" />
+            <body name="mz25_link2" pos="0.17 0.157 0.3005" quat="0.707107 0 0 -0.707107">
+                <inertial pos="0 0 0" mass="23.6" diaginertia="0.3 0.3 0.3" />
+                <joint name="mz25_joint2" pos="0 0 0" axis="1 0 0" limited="true" range="-2.62 1.83" damping="1" />
+                <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link2_v" />
+                <geom type="mesh" mesh="link2" />
+                <body name="mz25_link3" pos="0.157 0 0.88" quat="0.707107 0 0 0.707107">
+                    <inertial pos="0 0 0" mass="23.8" diaginertia="0.3 0.3 0.3" />
+                    <joint name="mz25_joint3" pos="0 0 0" axis="0 -1 0" limited="true" range="-1.43 3.21" damping="1" />
+                    <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link3_v" />
+                    <geom type="mesh" mesh="link3" />
+                    <body name="mz25_link4" pos="0.81 0 0.19">
+                        <inertial pos="0 0 0" mass="24.3" diaginertia="0.3 0.3 0.3" />
+                        <joint name="mz25_joint4" pos="0 0 0" axis="1 0 0" limited="true" range="-3.32 3.32" damping="1" />
+                        <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link4_v" />
+                        <geom type="mesh" mesh="link4" />
+                        <body name="mz25_link5" pos="0 0 0">
+                            <inertial pos="0 0 0" mass="35" diaginertia="0.3 0.3 0.3" />
+                            <joint name="mz25_joint5" pos="0 0 0" axis="0 -1 0" limited="true" range="-2.53 2.53" damping="1" />
+                            <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link5_v" />
+                            <geom type="mesh" mesh="link5" />
+                            <body name="mz25_link6" pos="0.101 0 0">
+                                <inertial pos="0 0 0" mass="1.47" diaginertia="0.3 0.3 0.3" />
+                                <joint name="mz25_joint6" pos="0 0 0" axis="1 0 0" limited="true" range="-6.28 6.28" damping="1" />
+                                <geom type="mesh" contype="0" conaffinity="0" group="1" mesh="link6_v" />
+                                <geom type="mesh" mesh="link6" />
+                            </body>
+                        </body>
+                    </body>
+                </body>
+            </body>
+        </body>
+    </worldbody>
+</mujoco>
