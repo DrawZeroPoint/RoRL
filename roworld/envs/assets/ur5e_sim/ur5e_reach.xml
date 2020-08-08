@@ -1,0 +1,19 @@
+<mujoco model="ur5e_pick v200">
+<!-- =================================================
+    Copyright 2020 Zhipeng Dong
+    Model   :: UR5e 2F-85 pick (MuJoCoV2.0)
+    Author  :: Zhipeng Dong (zhipengdongneu@gmail.com)
+    License :: Under Apache License, Version 2.0 (the "License")
+====================================================== -->
+
+    <include file="include/basic_scene.xml"/>
+    <include file="include/assets.xml"/>
+    <compiler meshdir="../ur5e_sim/meshes/" texturedir="../ur5e_sim/textures/" />
+
+    <worldbody>
+        <include file="include/ur5e_2f85.xml"/>
+    </worldbody>
+
+    <include file='include/actuator.xml'/>
+
+</mujoco>

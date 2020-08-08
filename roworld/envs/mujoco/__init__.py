@@ -29,6 +29,15 @@ def register_canonical_sawyer_envs():
             'norm_order': 2,
         },
     )
+    register(
+        id='UR5eReachXYZEnv-v0',
+        entry_point='roworld.envs.mujoco.ur5e_xyz'
+                    '.ur5e_reach:UR5eReachXYZEnv',
+        kwargs={
+            'hide_goal_markers': False,
+            'norm_order': 2,
+        },
+    )
     # register(
     #     id='SawyerPush-v0',
     #     entry_point='multiworld.envs.mujoco.sawyer_xyz'
