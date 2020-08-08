@@ -33,10 +33,10 @@
         <geom name="table" pos="0 0 0.8" size="0.5 0.5 0.02" material="M_table" type="box" contype="1" conaffinity="1"/>
 
         <!-- Add a cube on top of the table -->
-        <body name="object" pos="0 0 0.88">
+        <body name="object" pos="0 0 0.86">
             <freejoint name="object_joint" />
-            <geom size=".04 .04 .04" pos ="0 0 0" type="box" material="M_metal"/>
-            <inertial pos="0 0 0" mass="100" diaginertia="0.3 0.3 0.3" />
+            <geom size=".025 .025 .025" pos ="0 0 0" type="box" material="M_metal"/>
+            <inertial pos="0 0 0" mass="0.5" diaginertia="0.3 0.3 0.3" />
         </body>
 
     </worldbody>

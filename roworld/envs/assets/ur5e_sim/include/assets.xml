@@ -28,12 +28,16 @@
         <mesh name="C_wrist2" file="collision/wrist2.stl" />
         <mesh name="C_wrist3" file="collision/wrist3.stl" />
         <!-- Gripper Meshes (Robotiq 2F85) -->
-        <mesh file="kinova_robotiq_coupler.stl" />
-        <mesh file="robotiq_85_base_link.stl" />
-        <mesh file="robotiq_85_finger_link.stl" />
-        <mesh file="robotiq_85_finger_tip_link.stl" />
-        <mesh file="robotiq_85_inner_knuckle_link.stl" />
-        <mesh file="robotiq_85_knuckle_link.stl" />
+        <mesh name="robotiq_85_gripper_adapter_plate" file="robotiq_gripper/robotiq_85_gripper_adapter_plate.stl" />
+        <mesh name="robotiq_85_gripper_base" file="robotiq_gripper/robotiq_85_gripper_base.stl" />
+        <mesh name="robotiq_85_gripper_joint_0_L" file="robotiq_gripper/robotiq_85_gripper_joint_0_L.stl" />
+        <mesh name="robotiq_85_gripper_joint_1_L" file="robotiq_gripper/robotiq_85_gripper_joint_1_L.stl" />
+        <mesh name="robotiq_85_gripper_joint_0_R" file="robotiq_gripper/robotiq_85_gripper_joint_0_R.stl" />
+        <mesh name="robotiq_85_gripper_joint_1_R" file="robotiq_gripper/robotiq_85_gripper_joint_1_R.stl" />
+        <mesh name="robotiq_85_gripper_joint_2_L" file="robotiq_gripper/robotiq_85_gripper_joint_2_L.stl" />
+        <mesh name="robotiq_85_gripper_joint_3_L" file="robotiq_gripper/robotiq_85_gripper_joint_3_L.stl" />
+        <mesh name="robotiq_85_gripper_joint_2_R" file="robotiq_gripper/robotiq_85_gripper_joint_2_R.stl" />
+        <mesh name="robotiq_85_gripper_joint_3_R" file="robotiq_gripper/robotiq_85_gripper_joint_3_R.stl" />
         <!--Textures-->
         <texture name="T_robot" type="cube" builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" />
         <texture name="T_gripper" type="cube" builtin="flat" height="32" width="32" rgb1="0.45 0.45 0.45" rgb2="0 0 0"/>
@@ -44,8 +48,15 @@
     </asset>
 
     <default>
-        <motor gear="50"/>
-        <joint limited="true" damping="1" />
+        <default class="D_motor">
+            <motor ctrllimited="true" ctrlrange="-200. 200." />
+        </default>
+
+        <default class="D_position">
+            <position ctrllimited="true" ctrlrange="-100 100" kp="1" />
+        </default>
+
+        <joint limited="true" damping="10" />
 
         <default class="D_robot">
             <position forcelimited="true" ctrllimited="true" />

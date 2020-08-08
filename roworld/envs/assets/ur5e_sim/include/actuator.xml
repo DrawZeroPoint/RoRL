@@ -7,18 +7,43 @@
     ====================================================== -->
 
     <equality>
-        <joint joint1="joint7_1" joint2="joint7_2" polycoef="0 1 0 0 0"/>
+        <connect body1="robotiq_85_right_finger_link" body2="robotiq_85_right_finger_tip_link" anchor="0 0.047 -0.008"/>
+        <connect body1="robotiq_85_left_finger_link" body2="robotiq_85_left_finger_tip_link" anchor="0 0.047 -0.008"/>
     </equality>
 
+    <contact>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_left_knuckle_link"/>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_right_knuckle_link"/>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_left_inner_knuckle_link"/>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_right_inner_knuckle_link"/>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_left_finger_link"/>
+        <exclude body1="robotiq_85_base_link" body2="robotiq_85_right_finger_link"/>
+        <exclude body1="robotiq_85_right_finger_link" body2="robotiq_85_right_finger_tip_link"/>
+        <exclude body1="robotiq_85_left_finger_link" body2="robotiq_85_left_finger_tip_link"/>
+    </contact>
+
     <actuator>
-        <motor ctrllimited="true" ctrlrange="-2 2" joint='shoulder_pan_joint' /> <!--range -150 150-->
-        <motor ctrllimited="true" ctrlrange="-2 2" joint='shoulder_lift_joint'/>
-        <motor ctrllimited="true" ctrlrange="-2 2" joint='elbow_joint'  />
-        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_1_joint' />  <!--range -28 28-->
-        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_2_joint' />
-        <motor ctrllimited="true" ctrlrange="-1 1" joint='wrist_3_joint' />
-        <motor ctrllimited="true" ctrlrange="-1 1" joint='joint7_1' />
-        <motor ctrllimited="true" ctrlrange="-1 1" joint='joint7_2' />
+<!--        <motor joint='shoulder_pan_joint' class="D_motor" />-->
+<!--        <motor joint='shoulder_lift_joint' class="D_motor" />-->
+<!--        <motor joint='elbow_joint' class="D_motor" />-->
+<!--        <motor joint='wrist_1_joint' class="D_motor" />-->
+<!--        <motor joint='wrist_2_joint' class="D_motor" />-->
+<!--        <motor joint='wrist_3_joint' class="D_motor" />-->
+
+        <position joint='shoulder_pan_joint' class="D_position" />
+        <position joint='shoulder_lift_joint' class="D_position" />
+        <position joint='elbow_joint' class="D_position" />
+        <position joint='wrist_1_joint' class="D_position" />
+        <position joint='wrist_2_joint' class="D_position" />
+        <position joint='wrist_3_joint' class="D_position" />
+
+        <position ctrllimited="true" ctrlrange="0 0.8575" joint="robotiq_85_left_knuckle_joint" kp="10" name="gripper_robotiq_85_left_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="robotiq_85_left_inner_knuckle_joint" kp="10" name="gripper_robotiq_85_left_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="robotiq_85_left_finger_tip_joint" kp="10" name="gripper_robotiq_85_left_finger_tip_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="robotiq_85_right_knuckle_joint" kp="10" name="gripper_robotiq_85_right_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="robotiq_85_right_inner_knuckle_joint" kp="10" name="gripper_robotiq_85_right_inner_knuckle_joint" forcelimited="true" forcerange="-20 20"/>
+        <position ctrllimited="true" ctrlrange="0 1.5707" joint="robotiq_85_right_finger_tip_joint" kp="10" name="gripper_robotiq_85_right_finger_tip_joint" forcelimited="true" forcerange="-20 20"/>
+
     </actuator>
 
 </mujocoinclude>
