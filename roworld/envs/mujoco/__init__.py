@@ -11,15 +11,15 @@ def register_mujoco_envs():
     if REGISTERED:
         return
     REGISTERED = True
-    LOGGER.info("Registering multiworld mujoco gym environments")
-    register_sawyer_envs()
+    LOGGER.info("Registering RoWorld mujoco gym environments")
+    register_roworld_envs()
 
 
-def register_sawyer_envs():
-    register_canonical_sawyer_envs()
+def register_roworld_envs():
+    register_canonical_envs()
 
 
-def register_canonical_sawyer_envs():
+def register_canonical_envs():
     register(
         id='MZ25ReachXYZEnv-v0',
         entry_point='roworld.envs.mujoco.nachi_mz25_xyz'
@@ -36,6 +36,16 @@ def register_canonical_sawyer_envs():
         kwargs={
             'hide_goal_markers': False,
             'norm_order': 2,
+        },
+    )
+    register(
+        id='UR5ePushXYZEnv-v0',
+        entry_point='roworld.envs.mujoco.ur5e_xyz'
+                    '.ur5e_push_and_reach:UR5ePushAndReachXYZEnv',
+        kwargs={
+            'hide_goal_markers': False,
+            'norm_order': 2,
+            'reward_type': 'puck_distance',
         },
     )
     # register(

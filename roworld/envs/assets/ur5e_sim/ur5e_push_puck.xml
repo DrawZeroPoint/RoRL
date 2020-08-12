@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mujoco model="ur5e_pick v200">
+
+  <!-- =================================================
+    Copyright 2020 Zhipeng Dong
+    Model   :: UR5e 2F-85 push puck (MuJoCoV2.0)
+    Author  :: Zhipeng Dong (zhipengdongneu@gmail.com)
+    License :: Under Apache License, Version 2.0 (the "License")
+  ====================================================== -->
+
+  <include file="include/basic_scene.xml" />
+  <include file="include/assets.xml"/>
+  <compiler meshdir="../ur5e_sim/meshes/" texturedir="../ur5e_sim/textures/" />
+
+  <worldbody>
+    <include file="include/ur5e_2f85.xml" />
+
+    <body name="puck" pos="-0.03 -0.02 0.84">
+      <joint name="puck_joint" type="free" limited='false' damping="1" armature="0" />
+      <inertial pos="0 0 0" mass=".1" diaginertia=".1 .1 .1"/>
+      <geom name="puck_box"
+            type="cylinder"
+            pos="0 0 0"
+            size="0.04 0.02"
+            rgba=".1 .1 .9 1"
+            contype="1"
+            conaffinity="1"
+            friction=".1 .005 .0001"
+      />
+      <!-- puck goal marked with green -->
+      <site name="puck-goal-site" pos="0 0 0" size="0.01"
+            rgba="0 1 0 1"/>
+    </body>
+
+  </worldbody>
+
+  <include file='include/actuator.xml'/>
+
+</mujoco>

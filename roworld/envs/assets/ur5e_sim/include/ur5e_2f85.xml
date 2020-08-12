@@ -100,7 +100,7 @@
                                             <body name="robotiq_85_right_inner_knuckle_link" pos="0.04843 -0.0127 0" quat="0.500048 -0.5 -0.5 -0.499952">
                                                 <inertial pos="0 0 0" mass="0.01" diaginertia="0.001 0.001 0.001" />
                                                 <joint name="robotiq_85_right_inner_knuckle_joint" pos="0 0 0" axis="1 0 0" limited="true" range="0 1.5707" />
-                                                <geom pos="0 -0.04843 0.0127" quat="0.707141 0 -0.707073 0" type="mesh" contype="4" conaffinity="3" group="0" mesh="robotiq_85_gripper_joint_2_R" name="robotiq_85_gripper_joint_2_R"/>
+                                                <geom pos="0 -0.04843 0.0127" quat="0.707141 0 -0.707073 0" type="mesh" group="0" mesh="robotiq_85_gripper_joint_2_R" name="robotiq_85_gripper_joint_2_R"/>
                                                 <geom pos="0 -0.04843 0.0127" quat="0.707141 0 -0.707073 0" type="mesh" contype="0" conaffinity="0" group="1" mesh="robotiq_85_gripper_joint_2_R" />
                                                 <body name="robotiq_85_right_finger_tip_link" pos="0 0.04196 -0.0388">
                                                     <inertial pos="0 0 0" mass="0.01" diaginertia="0.001 0.001 0.001" />

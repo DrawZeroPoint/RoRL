@@ -30,7 +30,8 @@
     <worldbody>
         <light directional="false" diffuse=".8 .8 .8" specular="0.3 0.3 0.3" pos="0 0 30" dir="0 0 -1"/>
         <geom name="ground" pos="0 0 0" size="2 2 4" material="M_ground" type="plane" contype="1" conaffinity="1"/>
-        <geom name="table" pos="0 0 0.8" size="0.5 0.5 0.02" material="M_table" type="box" contype="1" conaffinity="1"/>
+        <geom name="table" pos="0 0 0.8" size="0.5 0.5 0.02" material="M_table" group="1"
+              type="box" contype="1" conaffinity="1"/>
 
         <!-- Add a cube on top of the table -->
         <!-- Note that deleting this will disable trained model due to state dim mismatch  -->

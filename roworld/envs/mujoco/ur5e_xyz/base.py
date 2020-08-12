@@ -17,6 +17,7 @@ class UR5eMocapBase(MujocoEnv, Serializable, metaclass=abc.ABCMeta):
     mocap_high = np.array([0.5, 0.5, 1.2])
 
     def __init__(self, model_name, frame_skip=50):
+        # Increase frame skip makes the simulation slower
         MujocoEnv.__init__(self, model_name, frame_skip=frame_skip)
         self.reset_mocap_welds()
 
