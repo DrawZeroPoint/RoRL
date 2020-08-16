@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 import scipy.misc
-import skvideo.io
+# import skvideo.io
 
 from rlkit.envs.vae_wrapper import VAEWrappedEnv
 

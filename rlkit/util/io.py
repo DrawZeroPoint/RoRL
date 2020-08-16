@@ -4,7 +4,7 @@ import pickle
 
 import boto3
 
-from rlkit.launchers.conf import LOCAL_LOG_DIR, AWS_S3_PATH
+from rlkit.launchers.conf import LOCAL_LOG_DIR
 import os
 
 PICKLE = 'pickle'
@@ -73,7 +73,7 @@ def load_local_or_remote_file(filepath, file_type=None):
     else:
         file_type = PICKLE
     if file_type == NUMPY:
-        object = np.load(open(local_path, "rb"))
+        object = np.load(open(local_path, "rb"), allow_pickle=True)
     elif file_type == JOBLIB:
         object = joblib.load(local_path)
     else:

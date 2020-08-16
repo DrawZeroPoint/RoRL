@@ -181,6 +181,7 @@ def generate_vae_dataset(variant):
     non_presampled_goal_img_is_garbage = variant.get(
         'non_presampled_goal_img_is_garbage', None)
     tag = variant.get('tag', '')
+
     from multiworld.core.image_env import ImageEnv, unormalize_image
     import rlkit.torch.pytorch_util as ptu
     info = {}

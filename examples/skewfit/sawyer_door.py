@@ -132,5 +132,4 @@ if __name__ == "__main__":
                 mode=mode,
                 variant=variant,
                 use_gpu=True,
-          )
-
+            )

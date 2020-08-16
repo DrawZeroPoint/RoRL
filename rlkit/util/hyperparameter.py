@@ -170,7 +170,7 @@ class DeterministicHyperparameterSweeper(Sweeper):
         dictionary.
         """
         self._hyperparameters = hyperparameters
-        self._default_kwargs = default_parameters or {}
+        self._default_kwargs = default_parameters or {}  # ={} only if default is None
         named_hyperparameters = []
         for name, values in self._hyperparameters.items():
             named_hyperparameters.append(
@@ -186,7 +186,7 @@ class DeterministicHyperparameterSweeper(Sweeper):
         Iterate over the hyperparameters in a grid-manner.
 
         :return: List of dictionaries. Each dictionary is a map from name to
-        hyperpameter.
+        hyperparameter.
         """
         return [
             ppp.merge_recursive_dicts(
