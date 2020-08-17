@@ -15,7 +15,7 @@ cfg = __C
 __C.algorithm = 'Skew-Fit-SAC'
 __C.double_algo = False
 __C.online_vae_exploration = False
-__C.img_size = 48
+__C.render = False
 
 __C.ALGORITHM = edict()
 __C.ALGORITHM.batch_size = 1024
@@ -24,25 +24,41 @@ __C.ALGORITHM.num_eval_steps_per_epoch = 500
 __C.ALGORITHM.num_expl_steps_per_train_loop = 500
 __C.ALGORITHM.num_trains_per_train_loop = 1000
 __C.ALGORITHM.min_num_steps_before_training = 10000
-__C.ALGORITHM.vae_training_schedule = vae_schedules.custom_schedule
 __C.ALGORITHM.oracle_data = False
-__C.ALGORITHM.vae_save_period = 50
-__C.ALGORITHM.parallel_vae_train = False
 
 # Environment options
-__C.ENV.id = 'UR5eReachEnv-v0'
+__C.ENV = edict()
+__C.ENV.id = 'UR5eVisualReachEnv-v0'
+__C.ENV.cls = None
+__C.ENV.kwargs = None
 __C.ENV.init_camera = None
+__C.ENV.imsize = 48
 
 __C.GENERATE_VAE_DATASET = edict()
-__C.GENERATE_VAE_DATASET.N = 2
-__C.GENERATE_VAE_DATASET.test_p = .9
+# How many training samples to create, one for one image
+__C.GENERATE_VAE_DATASET.N = 200
+# ratio percentage of generated images will be used as train set
+__C.GENERATE_VAE_DATASET.ratio = .9
 __C.GENERATE_VAE_DATASET.use_cached = True
-__C.GENERATE_VAE_DATASET.show = False
+# The npy file containing all data for training vae
+# If none is given, cached dataset in tmp will be used
+# as long as file exist and use_cached=True
+__C.GENERATE_VAE_DATASET.dataset_path = None
+__C.GENERATE_VAE_DATASET.show = True
 __C.GENERATE_VAE_DATASET.oracle_dataset = False
-__C.GENERATE_VAE_DATASET.n_random_steps = 1
+# How many steps taken before obtaining the observation image to dataset
+__C.GENERATE_VAE_DATASET.n_random_steps = 100
 __C.GENERATE_VAE_DATASET.non_presampled_goal_img_is_garbage = True
+__C.GENERATE_VAE_DATASET.random_and_oracle_policy_data_split = 0
+__C.GENERATE_VAE_DATASET.random_and_oracle_policy_data = False
+__C.GENERATE_VAE_DATASET.random_rollout_data = False
+__C.GENERATE_VAE_DATASET.oracle_dataset_using_set_to_goal = False
+__C.GENERATE_VAE_DATASET.uniform_dataset_generator = None
+__C.GENERATE_VAE_DATASET.generate_uniform_dataset_kwargs = None
 
 __C.POLICY = edict()
+# Pre trained policy model file path
+__C.POLICY.model_path = None
 __C.POLICY.hidden_sizes = [400, 300]
 
 __C.PRIORITY_FUNCTION = edict()
@@ -61,15 +77,14 @@ __C.REPLAY_BUFFER.fraction_goals_env_goals = 0.5
 __C.REPLAY_BUFFER.exploration_rewards_type = 'None'
 __C.REPLAY_BUFFER.vae_priority_type = 'vae_prob'
 __C.REPLAY_BUFFER.power = -0.5
-__C.REPLAY_BUFFER.relabeling_goal_sampling_mode = 'custom_goal_sampler'
+# rlkit.envs.vae_wrapper.VAEWrappedEnv.sample_goals
+__C.REPLAY_BUFFER.relabeling_goal_sampling_mode = 'vae_prior'
 
 __C.REWARD = edict()
 __C.REWARD.type = 'latent_distance'
 
 # Skew-fit options
 __C.SKEW_FIT = edict()
-__C.SKEW_FIT.save_video = True
-__C.SKEW_FIT.save_video_period = 50
 __C.SKEW_FIT.custom_goal_sampler = 'replay_buffer'
 __C.SKEW_FIT.max_path_length = 100
 __C.SKEW_FIT.exploration_goal_sampling_mode = 'custom_goal_sampler'
@@ -78,12 +93,11 @@ __C.SKEW_FIT.training_mode = 'train'
 __C.SKEW_FIT.testing_mode = 'test'
 __C.SKEW_FIT.observation_key = 'latent_observation'
 __C.SKEW_FIT.desired_goal_key = 'latent_desired_goal'
+__C.SKEW_FIT.save_video = True
+__C.SKEW_FIT.save_video_period = 50
 __C.SKEW_FIT.presample_goals = True
-__C.SKEW_FIT.presampled_goals_path = osp.join(
-    osp.dirname(mwmj.__file__),
-    "goals",
-    "door_goals.npy",
-)
+__C.SKEW_FIT.presampled_goals_path = '/home/dzp/RoRL/goals/roworld_ur5e_reach.npy'
+__C.SKEW_FIT.presample_image_goals_only = False
 
 __C.TWIN_SAC_TRAINER = edict()
 __C.TWIN_SAC_TRAINER.reward_scale = 1
@@ -93,26 +107,37 @@ __C.TWIN_SAC_TRAINER.target_update_period = 1
 __C.TWIN_SAC_TRAINER.use_automatic_entropy_tuning = True
 
 __C.VAE = edict()
+# Make sure this equal to ENV.imsize
+__C.VAE.imsize = 48
 __C.VAE.decoder_distribution = 'gaussian_identity_variance'
 __C.VAE.input_channels = 3
+__C.VAE.representation_size = 16
+__C.VAE.decoder_activation = 'gaussian'
 __C.VAE.architecture = imsize48_default_architecture
 
 __C.VAE_TRAINER = edict()
-__C.VAE_TRAINER.representation_size = 16
 __C.VAE_TRAINER.beta = 20
-__C.VAE_TRAINER.num_epochs = 0
-__C.VAE_TRAINER.dump_skew_debug_plots = False
-__C.VAE_TRAINER.decoder_activation = 'gaussian'
-__C.VAE_TRAINER.save_period = 1
 __C.VAE_TRAINER.lr = 1e-3
+# Define path to trained vae model if it has been trained
+# If it is None, it will be filled with actual model during runtime
+__C.VAE_TRAINER.vae_path = '/home/dzp/RoRL/models/vae/roworld_ur5e_reach.pkl'
+__C.VAE_TRAINER.vae_training_schedule = vae_schedules.custom_schedule
+__C.VAE_TRAINER.num_epochs = 3000
+# Period for saving intermediate result images
+__C.VAE_TRAINER.save_period = 200
+__C.VAE_TRAINER.parallel_train = False
+# If save vae data, the generated data will be put into train_data and test_data
+__C.VAE_TRAINER.save_vae_data = True
+__C.VAE_TRAINER.train_data = None
+__C.VAE_TRAINER.test_data = None
 
 
 def get_output_dir(imdb, weights_filename):
     """Return the directory where experimental artifacts are placed.
-  If the directory does not exist, it is created.
-  A canonical path is built using the name from an imdb and a network
-  (if not None).
-  """
+    If the directory does not exist, it is created.
+    A canonical path is built using the name from an imdb and a network
+    (if not None).
+    """
     outdir = osp.abspath(osp.join(__C.ROOT_DIR, 'output', __C.EXP_DIR, imdb.name))
     if weights_filename is None:
         weights_filename = 'default'

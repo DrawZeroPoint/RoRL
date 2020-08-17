@@ -163,7 +163,7 @@ class ConvVAE(GaussianLatentVAE):
             self.log_min_variance = float(np.log(min_variance))
         self.input_channels = input_channels
         self.imsize = imsize
-        self.imlength = self.imsize * self.imsize * self.input_channels
+        self.img_length = self.imsize * self.imsize * self.input_channels
 
         conv_args, conv_kwargs, deconv_args, deconv_kwargs = \
             architecture['conv_args'], architecture['conv_kwargs'], \
@@ -227,17 +227,17 @@ class ConvVAE(GaussianLatentVAE):
 
     def logprob(self, inputs, obs_distribution_params):
         if self.decoder_distribution == 'bernoulli':
-            inputs = inputs.narrow(start=0, length=self.imlength,
-                                   dim=1).contiguous().view(-1, self.imlength)
+            inputs = inputs.narrow(start=0, length=self.img_length,
+                                   dim=1).contiguous().view(-1, self.img_length)
             log_prob = - F.binary_cross_entropy(
                 obs_distribution_params[0],
                 inputs,
                 reduction='elementwise_mean'
-            ) * self.imlength
+            ) * self.img_length
             return log_prob
         if self.decoder_distribution == 'gaussian_identity_variance':
-            inputs = inputs.narrow(start=0, length=self.imlength,
-                                   dim=1).contiguous().view(-1, self.imlength)
+            inputs = inputs.narrow(start=0, length=self.img_length,
+                                   dim=1).contiguous().view(-1, self.img_length)
             log_prob = -1 * F.mse_loss(inputs, obs_distribution_params[0],
                                        reduction='elementwise_mean')
             return log_prob

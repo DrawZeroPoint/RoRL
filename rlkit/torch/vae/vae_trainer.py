@@ -29,12 +29,13 @@ def relative_probs_from_log_probs(log_probs):
     assert not np.any(probs <= 0), 'choose a smaller power'
     return probs
 
+
 def compute_log_p_log_q_log_d(
-    model,
-    data,
-    decoder_distribution='bernoulli',
-    num_latents_to_sample=1,
-    sampling_method='importance_sampling'
+        model,
+        data,
+        decoder_distribution='bernoulli',
+        num_latents_to_sample=1,
+        sampling_method='importance_sampling'
 ):
     assert data.dtype == np.float64, 'images should be normalized'
     imgs = ptu.from_numpy(data)
@@ -77,16 +78,17 @@ def compute_log_p_log_q_log_d(
         log_d[:, i] = log_d_x_given_z
     return log_p, log_q, log_d
 
+
 def compute_p_x_np_to_np(
-    model,
-    data,
-    power,
-    decoder_distribution='bernoulli',
-    num_latents_to_sample=1,
-    sampling_method='importance_sampling'
+        model,
+        data,
+        power,
+        decoder_distribution='bernoulli',
+        num_latents_to_sample=1,
+        sampling_method='importance_sampling'
 ):
     assert data.dtype == np.float64, 'images should be normalized'
-    assert power >= -1 and power <= 0, 'power for skew-fit should belong to [-1, 0]'
+    assert -1 <= power <= 0, 'power for skew-fit should belong to [-1, 0]'
 
     log_p, log_q, log_d = compute_log_p_log_q_log_d(
         model,
@@ -145,7 +147,7 @@ class ConvVAETrainer(object):
         self.beta_schedule = beta_schedule
         if self.beta_schedule is None or is_auto_encoder:
             self.beta_schedule = ConstantSchedule(self.beta)
-        self.imsize = model.imsize
+        self.img_size = model.imsize
         self.do_scatterplot = do_scatterplot
 
         model.to(ptu.device)
@@ -153,14 +155,11 @@ class ConvVAETrainer(object):
         self.model = model
         self.representation_size = model.representation_size
         self.input_channels = model.input_channels
-        self.imlength = model.imlength
+        self.imlength = model.img_length
 
         self.lr = lr
         params = list(self.model.parameters())
-        self.optimizer = optim.Adam(params,
-            lr=self.lr,
-            weight_decay=weight_decay,
-        )
+        self.optimizer = optim.Adam(params, lr=self.lr, weight_decay=weight_decay,)
         self.train_dataset, self.test_dataset = train_dataset, test_dataset
         assert self.train_dataset.dtype == np.uint8
         assert self.test_dataset.dtype == np.uint8
@@ -403,15 +402,14 @@ class ConvVAETrainer(object):
             if batch_idx == 0 and save_reconstruction:
                 n = min(next_obs.size(0), 8)
                 comparison = torch.cat([
-                    next_obs[:n].narrow(start=0, length=self.imlength, dim=1)
-                        .contiguous().view(
-                        -1, self.input_channels, self.imsize, self.imsize
+                    next_obs[:n].narrow(start=0, length=self.imlength, dim=1).contiguous().view(
+                        -1, self.input_channels, self.img_size, self.img_size
                     ).transpose(2, 3),
                     reconstructions.view(
                         self.batch_size,
                         self.input_channels,
-                        self.imsize,
-                        self.imsize,
+                        self.img_size,
+                        self.img_size,
                     )[:n].transpose(2, 3)
                 ])
                 save_dir = osp.join(logger.get_snapshot_dir(),
@@ -478,7 +476,7 @@ class ConvVAETrainer(object):
         sample = self.model.decode(sample)[0].cpu()
         save_dir = osp.join(logger.get_snapshot_dir(), 's%d.png' % epoch)
         save_image(
-            sample.data.view(64, self.input_channels, self.imsize, self.imsize).transpose(2, 3),
+            sample.data.view(64, self.input_channels, self.img_size, self.img_size).transpose(2, 3),
             save_dir
         )
 
@@ -490,8 +488,8 @@ class ConvVAETrainer(object):
             img_torch = ptu.from_numpy(normalize_image(img_np))
             recon, *_ = self.model(img_torch.view(1, -1))
 
-            img = img_torch.view(self.input_channels, self.imsize, self.imsize).transpose(1, 2)
-            rimg = recon.view(self.input_channels, self.imsize, self.imsize).transpose(1, 2)
+            img = img_torch.view(self.input_channels, self.img_size, self.img_size).transpose(1, 2)
+            rimg = recon.view(self.input_channels, self.img_size, self.img_size).transpose(1, 2)
             imgs.append(img)
             recons.append(rimg)
         all_imgs = torch.stack(imgs + recons)
@@ -550,8 +548,8 @@ class ConvVAETrainer(object):
             img_torch = ptu.from_numpy(normalize_image(img_np))
             recon, *_ = self.model(img_torch.view(1, -1))
 
-            img = img_torch.view(self.input_channels, self.imsize, self.imsize).transpose(1, 2)
-            rimg = recon.view(self.input_channels, self.imsize, self.imsize).transpose(1, 2)
+            img = img_torch.view(self.input_channels, self.img_size, self.img_size).transpose(1, 2)
+            rimg = recon.view(self.input_channels, self.img_size, self.img_size).transpose(1, 2)
             imgs.append(img)
             recons.append(rimg)
         all_imgs = torch.stack(imgs + recons)
