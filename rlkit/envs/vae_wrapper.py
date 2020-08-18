@@ -141,6 +141,7 @@ class VAEWrappedEnv(ProxyEnv, MultitaskEnv):
 
     def sample_goals(self, batch_size):
         # TODO: make mode a parameter you pass in
+        # FIXME: NotImplementedError("{} cannot be pickled"
         if self._goal_sampling_mode == 'custom_goal_sampler':
             return self.custom_goal_sampler(batch_size)
         elif self._goal_sampling_mode == 'presampled':
@@ -184,6 +185,12 @@ class VAEWrappedEnv(ProxyEnv, MultitaskEnv):
             goals['image_desired_goal'] = image_goals
         if decoded_goals is not None:
             goals[self.vae_input_desired_goal_key] = decoded_goals
+
+        # Create presampled goals
+        # print(goals['state_desired_goal'].shape, goals['image_desired_goal'].shape)
+        # if batch_size != 1:
+        #     np.save('/home/dzp/data.npy', goals)
+        #     assert False
         return goals
 
     def get_goal(self):

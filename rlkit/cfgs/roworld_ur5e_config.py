@@ -7,8 +7,6 @@ import rlkit.torch.vae.vae_schedules as vae_schedules
 from rlkit.torch.vae.conv_vae import imsize48_default_architecture
 
 __C = edict()
-# Consumers can get config by:
-#   from fast_rcnn_config import cfg
 cfg = __C
 
 # General options
@@ -36,14 +34,14 @@ __C.ENV.imsize = 48
 
 __C.GENERATE_VAE_DATASET = edict()
 # How many training samples to create, one for one image
-__C.GENERATE_VAE_DATASET.N = 200
+__C.GENERATE_VAE_DATASET.N = 2000
 # ratio percentage of generated images will be used as train set
 __C.GENERATE_VAE_DATASET.ratio = .9
 __C.GENERATE_VAE_DATASET.use_cached = True
 # The npy file containing all data for training vae
 # If none is given, cached dataset in tmp will be used
 # as long as file exist and use_cached=True
-__C.GENERATE_VAE_DATASET.dataset_path = None
+__C.GENERATE_VAE_DATASET.dataset_path = '/home/dzp/RoRL/dataset/roworld_ur5e_reach.npy'
 __C.GENERATE_VAE_DATASET.show = True
 __C.GENERATE_VAE_DATASET.oracle_dataset = False
 # How many steps taken before obtaining the observation image to dataset
@@ -78,7 +76,7 @@ __C.REPLAY_BUFFER.exploration_rewards_type = 'None'
 __C.REPLAY_BUFFER.vae_priority_type = 'vae_prob'
 __C.REPLAY_BUFFER.power = -0.5
 # rlkit.envs.vae_wrapper.VAEWrappedEnv.sample_goals
-__C.REPLAY_BUFFER.relabeling_goal_sampling_mode = 'vae_prior'
+__C.REPLAY_BUFFER.relabeling_goal_sampling_mode = 'custom_goal_sampler'
 
 __C.REWARD = edict()
 __C.REWARD.type = 'latent_distance'
@@ -96,7 +94,7 @@ __C.SKEW_FIT.desired_goal_key = 'latent_desired_goal'
 __C.SKEW_FIT.save_video = True
 __C.SKEW_FIT.save_video_period = 50
 __C.SKEW_FIT.presample_goals = True
-__C.SKEW_FIT.presampled_goals_path = '/home/dzp/RoRL/goals/roworld_ur5e_reach.npy'
+__C.SKEW_FIT.presampled_goals_path = '/home/dzp/RoRL/goals/roworld_ur5e_reach_goals.npy'
 __C.SKEW_FIT.presample_image_goals_only = False
 
 __C.TWIN_SAC_TRAINER = edict()
@@ -125,9 +123,11 @@ __C.VAE_TRAINER.vae_training_schedule = vae_schedules.custom_schedule
 __C.VAE_TRAINER.num_epochs = 3000
 # Period for saving intermediate result images
 __C.VAE_TRAINER.save_period = 200
+# FIXME Set this to true will cause error!
 __C.VAE_TRAINER.parallel_train = False
 # If save vae data, the generated data will be put into train_data and test_data
 __C.VAE_TRAINER.save_vae_data = True
+# These data will be generated in runtime
 __C.VAE_TRAINER.train_data = None
 __C.VAE_TRAINER.test_data = None
 

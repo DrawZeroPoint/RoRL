@@ -88,11 +88,11 @@ if __name__ == "__main__":
         train_vae_variant=dict(
             representation_size=16,
             beta=20,
-            num_epochs=0,
+            num_epochs=1000,
             dump_skew_debug_plots=False,
             decoder_activation='gaussian',
             generate_vae_dataset_kwargs=dict(
-                N=2,
+                N=2000,
                 test_p=.9,
                 use_cached=True,
                 show=False,
@@ -108,7 +108,7 @@ if __name__ == "__main__":
             algo_kwargs=dict(
                 lr=1e-3,
             ),
-            save_period=1,
+            save_period=200,
         ),
     )
 

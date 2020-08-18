@@ -23,7 +23,7 @@ class OnlineVaeAlgorithm(TorchBatchRLAlgorithm):
             vae_save_period=1,
             vae_training_schedule=vae_schedules.never_train,
             oracle_data=False,
-            parallel_vae_train=True,
+            parallel_vae_train=False,  # FIXME Set this to false
             vae_min_num_steps_before_training=0,
             uniform_dataset=None,
             **base_kwargs

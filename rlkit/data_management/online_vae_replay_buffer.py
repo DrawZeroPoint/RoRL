@@ -203,8 +203,8 @@ class OnlineVaeRelabelingBuffer(SharedObsDictRelabelingBuffer):
                             **self.priority_function_kwargs
                         ).reshape(-1, 1)
                     )
-            obs_sum+= self._obs[self.observation_key][idxs].sum(axis=0)
-            obs_square_sum+= np.power(self._obs[self.observation_key][idxs], 2).sum(axis=0)
+            obs_sum += self._obs[self.observation_key][idxs].sum(axis=0)
+            obs_square_sum += np.power(self._obs[self.observation_key][idxs], 2).sum(axis=0)
 
             cur_idx = next_idx
             next_idx += batch_size
@@ -226,7 +226,7 @@ class OnlineVaeRelabelingBuffer(SharedObsDictRelabelingBuffer):
             else:
                 self._vae_sample_probs = self._vae_sample_priorities[:self._size] ** self.power
             p_sum = np.sum(self._vae_sample_probs)
-            assert p_sum > 0, "Unnormalized p sum is {}".format(p_sum)
+            assert p_sum > 0, "Un-normalized p sum is {}".format(p_sum)
             self._vae_sample_probs /= np.sum(self._vae_sample_probs)
             self._vae_sample_probs = self._vae_sample_probs.flatten()
 

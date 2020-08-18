@@ -345,6 +345,7 @@ def skewfit_experiment(cfgs):
         observation_key=observation_key,
         desired_goal_key=desired_goal_key,
         achieved_goal_key=achieved_goal_key,
+        priority_function_kwargs=cfgs.PRIORITY_FUNCTION,
         **cfgs.REPLAY_BUFFER
     )
     vae_trainer = ConvVAETrainer(
@@ -371,7 +372,7 @@ def skewfit_experiment(cfgs):
         cfgs.SKEW_FIT.evaluation_goal_sampling_mode,
         env,
         MakeDeterministic(policy),
-        max_path_length,
+        decode_goals=True,  # TODO check this
         observation_key=observation_key,
         desired_goal_key=desired_goal_key,
     )
@@ -379,7 +380,7 @@ def skewfit_experiment(cfgs):
         cfgs.SKEW_FIT.exploration_goal_sampling_mode,
         env,
         policy,
-        max_path_length,
+        decode_goals=True,
         observation_key=observation_key,
         desired_goal_key=desired_goal_key,
     )
@@ -395,6 +396,7 @@ def skewfit_experiment(cfgs):
         vae_trainer=vae_trainer,
         uniform_dataset=uniform_dataset,  # TODO used in test vae
         max_path_length=max_path_length,
+        parallel_vae_train=cfgs.VAE_TRAINER.parallel_train,
         **cfgs.ALGORITHM
     )
 
@@ -472,12 +474,11 @@ def get_envs(cfgs):
             del image_env
             image_env = ImageEnv(
                 env,
-                cfgs.get('imsize'),
+                cfgs.ENV.get('imsize'),
                 init_camera=init_camera,
                 transpose=True,
                 normalize=True,
                 presampled_goals=presampled_goals,
-                **cfgs.get('image_env_kwargs', {})
             )
             vae_env = VAEWrappedEnv(
                 image_env,
@@ -488,9 +489,9 @@ def get_envs(cfgs):
                 render_rollouts=render,
                 reward_params=reward_params,
                 presampled_goals=presampled_goals,
-                **cfgs.get('vae_wrapped_env_kwargs', {})
+                sample_from_true_prior=True,
             )
-            print("Presampling all goals only")
+            print("Pre sampling all goals only")
         else:
             vae_env = VAEWrappedEnv(
                 image_env,
