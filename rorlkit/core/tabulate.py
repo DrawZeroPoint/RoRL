@@ -4,7 +4,6 @@
 """Pretty-print tabular data."""
 
 
-
 from collections import namedtuple
 from platform import python_version_tuple
 import re

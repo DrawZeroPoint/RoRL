@@ -2,11 +2,9 @@
 This script aims to implement Skew-Fit for reaching task with UR5e + 2F85,
 under Webots environment
 """
-import rlkit.util.hyperparameter as hyp
-
-from rlkit.cfgs.roworld_ur5e_config import cfg
-from rlkit.launchers.launcher_util import run_experiment
-from rlkit.launchers.roworld_experiments import roworld_full_experiment
+from rorlkit.cfgs.roworld_ur5e_config import cfg
+from rorlkit.launchers.launcher_util import run_experiment
+from rorlkit.launchers.roworld_experiments import roworld_full_experiment
 
 
 if __name__ == "__main__":

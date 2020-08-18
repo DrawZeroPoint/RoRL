@@ -41,8 +41,10 @@ __C.GENERATE_VAE_DATASET.use_cached = True
 # The npy file containing all data for training vae
 # If none is given, cached dataset in tmp will be used
 # as long as file exist and use_cached=True
-__C.GENERATE_VAE_DATASET.dataset_path = '/home/dzp/RoRL/dataset/roworld_ur5e_reach.npy'
-__C.GENERATE_VAE_DATASET.show = True
+__C.GENERATE_VAE_DATASET.dataset_path = osp.abspath(
+    '../../dataset/UR5eVisualReachEnv-v0_N2000__size48_random_oracle_split_0.npy'
+)
+__C.GENERATE_VAE_DATASET.show = False
 __C.GENERATE_VAE_DATASET.oracle_dataset = False
 # How many steps taken before obtaining the observation image to dataset
 __C.GENERATE_VAE_DATASET.n_random_steps = 100
@@ -118,7 +120,7 @@ __C.VAE_TRAINER.beta = 20
 __C.VAE_TRAINER.lr = 1e-3
 # Define path to trained vae model if it has been trained
 # If it is None, it will be filled with actual model during runtime
-__C.VAE_TRAINER.vae_path = '/home/dzp/RoRL/models/vae/roworld_ur5e_reach.pkl'
+__C.VAE_TRAINER.vae_path = osp.abspath('../../models/vae/roworld-ur5e-reach_2020_08_18_20_25_13.pkl')
 __C.VAE_TRAINER.vae_training_schedule = vae_schedules.custom_schedule
 __C.VAE_TRAINER.num_epochs = 3000
 # Period for saving intermediate result images

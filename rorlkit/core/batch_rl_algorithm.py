@@ -2,7 +2,7 @@ import abc
 
 import gtimer as gt
 from rorlkit.core.rl_algorithm import BaseRLAlgorithm
-from rlkit.data_management.replay_buffer import ReplayBuffer
+from rorlkit.data_management.replay_buffer import ReplayBuffer
 from rorlkit.samplers.data_collector import PathCollector
 
 

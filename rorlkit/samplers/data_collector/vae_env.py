@@ -1,5 +1,5 @@
 from rlkit.envs.vae_wrapper import VAEWrappedEnv
-from rlkit.samplers.data_collector import GoalConditionedPathCollector
+from rorlkit.samplers.data_collector import GoalConditionedPathCollector
 
 
 class VAEWrappedEnvPathCollector(GoalConditionedPathCollector):

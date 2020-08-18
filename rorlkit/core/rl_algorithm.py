@@ -4,7 +4,7 @@ from collections import OrderedDict
 import gtimer as gt
 
 from rorlkit.core import logger, eval_util
-from rlkit.data_management.replay_buffer import ReplayBuffer
+from rorlkit.data_management.replay_buffer import ReplayBuffer
 from rorlkit.samplers.data_collector import DataCollector
 
 

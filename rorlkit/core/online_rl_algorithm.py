@@ -1,9 +1,9 @@
 import abc
 
 import gtimer as gt
-from rlkit.core.rl_algorithm import BaseRLAlgorithm
-from rlkit.data_management.replay_buffer import ReplayBuffer
-from rlkit.samplers.data_collector import (
+from rorlkit.core.rl_algorithm import BaseRLAlgorithm
+from rorlkit.data_management.replay_buffer import ReplayBuffer
+from rorlkit.samplers.data_collector import (
     PathCollector,
     StepCollector,
 )

@@ -15,8 +15,15 @@ class DataCollector(object, metaclass=abc.ABCMeta):
     def get_epoch_paths(self):
         pass
 
-    @abc.abstractmethod
     def collect_new_paths(
+            self,
+            max_path_length,
+            num_steps,
+            discard_incomplete_paths,
+    ):
+        pass
+
+    def collect_new_steps(
             self,
             max_path_length,
             num_steps,
