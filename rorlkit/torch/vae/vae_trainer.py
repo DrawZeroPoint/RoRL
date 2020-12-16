@@ -400,8 +400,9 @@ class ConvVAETrainer(object):
         beta = float(self.beta_schedule.get_value(epoch))
         for batch_idx in range(10):
             next_obs = self.get_batch(train=False)
-            #show_one_tensor_image(next_obs[0])
             reconstructions, obs_distribution_params, latent_distribution_params = self.model(next_obs)
+            re_show = reconstructions[0].reshape(self.input_channels, self.img_size, self.img_size)
+            show_one_tensor_image(re_show, channel_first=True, name='test reconstruction')
             log_prob = self.model.logprob(next_obs, obs_distribution_params)
             kle = self.model.kl_divergence(latent_distribution_params)
             loss = -1 * log_prob + beta * kle
@@ -427,7 +428,7 @@ class ConvVAETrainer(object):
                         self.img_size,
                     )[:n].transpose(2, 3)
                 ])
-                save_dir = osp.join(logger.get_snapshot_dir(), 'train_%d.png' % epoch)
+                save_dir = osp.join(logger.get_snapshot_dir(), 'test_%d.png' % epoch)
                 save_image(comparison.data.cpu(), save_dir, nrow=n)
 
         zs = np.array(zs)
@@ -488,7 +489,7 @@ class ConvVAETrainer(object):
         self.model.eval()
         sample = ptu.randn(64, self.representation_size)
         sample = self.model.decode(sample)[0].cpu()
-        save_dir = osp.join(logger.get_snapshot_dir(), 'eval_%d.png' % epoch)
+        save_dir = osp.join(logger.get_snapshot_dir(), 'samples_%d.png' % epoch)
         save_image(
             sample.data.view(64, self.input_channels, self.img_size, self.img_size).transpose(2, 3),
             save_dir
