@@ -2,12 +2,14 @@ from collections import OrderedDict
 from os import path as osp
 import numpy as np
 import torch
+import cv2
+
 from torch import optim
 from torch.distributions import Normal
 from torch.utils.data import DataLoader
 from torchvision.utils import save_image
 from multiworld.core.image_env import normalize_image
-from rlkit.core import logger
+from rorlkit.core import logger
 from rlkit.core.eval_util import create_stats_ordered_dict
 from rlkit.torch import pytorch_util as ptu
 from rlkit.torch.data import (
@@ -16,6 +18,15 @@ from rlkit.torch.data import (
     InfiniteRandomSampler,
 )
 from rlkit.util.ml_util import ConstantSchedule
+
+
+def show_one_tensor_image(tensor, channel_first=False):
+    if channel_first:
+        ndarr = tensor.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()
+    else:
+        ndarr = tensor.mul_(255).add_(0.5).clamp_(0, 255).to('cpu', torch.uint8).numpy()
+    cv2.imshow('f', ndarr)
+    cv2.waitKey(10)
 
 
 def relative_probs_from_log_probs(log_probs):
@@ -335,6 +346,8 @@ class ConvVAETrainer(object):
                 actions = None
             self.optimizer.zero_grad()
             reconstructions, obs_distribution_params, latent_distribution_params = self.model(next_obs)
+            re_show = reconstructions[0].view(self.input_channels, self.img_size, self.img_size)
+            show_one_tensor_image(re_show, channel_first=True)
             log_prob = self.model.logprob(next_obs, obs_distribution_params)
             kle = self.model.kl_divergence(latent_distribution_params)
 
@@ -386,6 +399,7 @@ class ConvVAETrainer(object):
         beta = float(self.beta_schedule.get_value(epoch))
         for batch_idx in range(10):
             next_obs = self.get_batch(train=False)
+            #show_one_tensor_image(next_obs[0])
             reconstructions, obs_distribution_params, latent_distribution_params = self.model(next_obs)
             log_prob = self.model.logprob(next_obs, obs_distribution_params)
             kle = self.model.kl_divergence(latent_distribution_params)
@@ -412,8 +426,7 @@ class ConvVAETrainer(object):
                         self.img_size,
                     )[:n].transpose(2, 3)
                 ])
-                save_dir = osp.join(logger.get_snapshot_dir(),
-                                    'r%d.png' % epoch)
+                save_dir = osp.join(logger.get_snapshot_dir(), 'train_%d.png' % epoch)
                 save_image(comparison.data.cpu(), save_dir, nrow=n)
 
         zs = np.array(zs)
@@ -474,7 +487,7 @@ class ConvVAETrainer(object):
         self.model.eval()
         sample = ptu.randn(64, self.representation_size)
         sample = self.model.decode(sample)[0].cpu()
-        save_dir = osp.join(logger.get_snapshot_dir(), 's%d.png' % epoch)
+        save_dir = osp.join(logger.get_snapshot_dir(), 'eval_%d.png' % epoch)
         save_image(
             sample.data.view(64, self.input_channels, self.img_size, self.img_size).transpose(2, 3),
             save_dir

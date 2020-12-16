@@ -5,10 +5,9 @@ from torch.nn import functional as F
 from rlkit.pythonplusplus import identity
 from rlkit.torch import pytorch_util as ptu
 import numpy as np
-from rlkit.torch.conv_networks import CNN, DCNN
-from rlkit.torch.vae.vae_base import GaussianLatentVAE
+from rorlkit.torch.conv_networks import CNN, DCNN
+from rorlkit.torch.vae.vae_base import GaussianLatentVAE
 
-###### DEFAULT ARCHITECTURES #########
 
 imsize48_default_architecture = dict(
     conv_args=dict(
@@ -214,8 +213,7 @@ class ConvVAE(GaussianLatentVAE):
         return (mu, logvar)
 
     def decode(self, latents):
-        decoded = self.decoder(latents).view(-1,
-                                             self.imsize * self.imsize * self.input_channels)
+        decoded = self.decoder(latents).view(-1, self.img_length)
         if self.decoder_distribution == 'bernoulli':
             return decoded, [decoded]
         elif self.decoder_distribution == 'gaussian_identity_variance':
@@ -236,8 +234,10 @@ class ConvVAE(GaussianLatentVAE):
             ) * self.img_length
             return log_prob
         if self.decoder_distribution == 'gaussian_identity_variance':
-            inputs = inputs.narrow(start=0, length=self.img_length,
-                                   dim=1).contiguous().view(-1, self.img_length)
+            """Dong
+            add reshape before narrow
+            """
+            inputs = inputs.contiguous().view(-1, self.img_length)
             log_prob = -1 * F.mse_loss(inputs, obs_distribution_params[0],
                                        reduction='elementwise_mean')
             return log_prob

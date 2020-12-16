@@ -12,8 +12,8 @@ import __main__ as main
 import dateutil.tz
 import numpy as np
 
-from rlkit.core import logger
-from rlkit.launchers import conf
+from rorlkit.core import logger
+from rorlkit.launchers import conf
 from rlkit.torch.pytorch_util import set_gpu_mode
 import rlkit.pythonplusplus as ppp
 
