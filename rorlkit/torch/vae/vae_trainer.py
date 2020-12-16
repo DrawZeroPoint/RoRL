@@ -20,13 +20,14 @@ from rlkit.torch.data import (
 from rlkit.util.ml_util import ConstantSchedule
 
 
-def show_one_tensor_image(tensor, channel_first=False):
+def show_one_tensor_image(tensor, channel_first=False, name='image'):
     if channel_first:
-        ndarr = tensor.mul_(255).add_(0.5).clamp_(0, 255).permute(1, 2, 0).to('cpu', torch.uint8).numpy()
+        ndarr = tensor.mul_(255).add_(0.5).clamp_(0, 255).permute(2, 1, 0).to('cpu', torch.uint8).numpy()
+        ndarr = cv2.cvtColor(ndarr, cv2.COLOR_RGB2BGR)
     else:
         ndarr = tensor.mul_(255).add_(0.5).clamp_(0, 255).to('cpu', torch.uint8).numpy()
-    cv2.imshow('f', ndarr)
-    cv2.waitKey(10)
+    cv2.imshow(name, ndarr)
+    cv2.waitKey(1)
 
 
 def relative_probs_from_log_probs(log_probs):
@@ -346,8 +347,8 @@ class ConvVAETrainer(object):
                 actions = None
             self.optimizer.zero_grad()
             reconstructions, obs_distribution_params, latent_distribution_params = self.model(next_obs)
-            re_show = reconstructions[0].view(self.input_channels, self.img_size, self.img_size)
-            show_one_tensor_image(re_show, channel_first=True)
+            re_show = reconstructions[0].reshape(self.input_channels, self.img_size, self.img_size)
+            show_one_tensor_image(re_show, channel_first=True, name='train reconstruction')
             log_prob = self.model.logprob(next_obs, obs_distribution_params)
             kle = self.model.kl_divergence(latent_distribution_params)
 
