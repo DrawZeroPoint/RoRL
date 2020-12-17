@@ -8,7 +8,6 @@ import numpy as np
 from rorlkit.torch.conv_networks import CNN, DCNN
 from rorlkit.torch.vae.vae_base import GaussianLatentVAE
 
-
 imsize48_default_architecture = dict(
     conv_args=dict(
         kernel_sizes=[5, 3, 3],
@@ -210,7 +209,7 @@ class ConvVAE(GaussianLatentVAE):
             logvar = self.fc2(h)
         else:
             logvar = self.log_min_variance + torch.abs(self.fc2(h))
-        return (mu, logvar)
+        return mu, logvar
 
     def decode(self, latents):
         decoded = self.decoder(latents).view(-1, self.img_length)
@@ -234,10 +233,8 @@ class ConvVAE(GaussianLatentVAE):
             ) * self.img_length
             return log_prob
         if self.decoder_distribution == 'gaussian_identity_variance':
-            """Dong
-            add reshape before narrow
-            """
-            inputs = inputs.contiguous().view(-1, self.img_length)
+            inputs = inputs.narrow(start=0, length=self.img_length,
+                                   dim=1).contiguous().view(-1, self.img_length)
             log_prob = -1 * F.mse_loss(inputs, obs_distribution_params[0],
                                        reduction='elementwise_mean')
             return log_prob

@@ -338,13 +338,9 @@ class ConvVAETrainer(object):
         for batch_idx in range(batches):
             if sample_batch is not None:
                 data = sample_batch(self.batch_size, epoch)
-                # obs = data['obs']
                 next_obs = data['next_obs']
-                # actions = data['actions']
             else:
                 next_obs = self.get_batch(epoch=epoch)
-                obs = None
-                actions = None
             self.optimizer.zero_grad()
             reconstructions, obs_distribution_params, latent_distribution_params = self.model(next_obs)
             re_show = reconstructions[0].reshape(self.input_channels, self.img_size, self.img_size)
