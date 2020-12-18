@@ -5,12 +5,13 @@ from rorlkit.torch.vae.conv_vae import imsize48_default_architecture
 
 if __name__ == "__main__":
     variant = dict(
+        exp_name='panda_arm_rgby',
         imsize=48,
         train_vae_variant=dict(
             data_path='/home/dzp/samples_img.npy',
             imsize=48,
             representation_size=16,
-            beta=20,
+            beta=400,
             num_epochs=1000,
             dump_skew_debug_plots=False,
             decoder_activation='gaussian',

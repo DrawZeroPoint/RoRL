@@ -28,9 +28,9 @@ if __name__ == "__main__":
         imsize=48,
         test_p=0.9,
         # exp1
-        data_path='/home/dzp/samples_img.npy',
+        data_path='../dataset/panda_arm_rgby.npy',
         flatted_data=False,
-        vae_path='../models/vae/vae.pkl',
+        vae_path='../models/vae/panda_arm_rgby_vae.pkl',
         # exp2
         # data_path='/home/dzp/Sawyer.npy',
         # flatted_data=True,
