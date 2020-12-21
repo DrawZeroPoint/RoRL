@@ -16,21 +16,8 @@ from rorlkit.util.io import load_local_or_remote_file
 
 app = Flask(__name__, template_folder="templates")
 
-variant = dict(
-    imsize=48,
-    test_p=0.9,
-    # exp1
-    data_path='../dataset/panda_arm_rgby.npy',
-    flatted_data=False,
-    vae_path='../models/vae/panda_arm_rgby_vae.pkl',
-    # exp2
-    # data_path='/home/dzp/Sawyer.npy',
-    # flatted_data=True,
-    # vae_path='../models/vae/sawyer_door.pkl'
-)
-
-vae_path = variant.get("vae_path")
-vae = load_local_or_remote_file(vae_path) if type(vae_path) is str else vae_path
+vae_path = '../models/vae/cmm_rgby_xy_vae.pkl'
+vae = load_local_or_remote_file(vae_path)
 
 
 def get_latent(raw_image):

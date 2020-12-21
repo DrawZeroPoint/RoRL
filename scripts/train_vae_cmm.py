@@ -1,15 +1,33 @@
+import os
+import cv2
+import glob
+import numpy as np
+
 from rorlkit.launchers.launcher_util import run_experiment
 from rorlkit.launchers.vae_experiments import vae_experiment
 from rorlkit.torch.vae.conv_vae import imsize48_default_architecture
 
 
 if __name__ == "__main__":
-    exp_name = '3d_rgby'
+    # generate image dataset
+    exp_name = 'cmm_rgby_xy'
+
+    image_dataset = []
+    image_path = '/home/dzp/Project_POE/{}'.format(exp_name)
+    images = glob.glob(os.path.join(image_path, '*.jpg'))
+    for i in range(len(images)):
+        image = cv2.imread(os.path.join(image_path, '{}.jpg'.format(i)))
+        image_dataset.append(image)
+    image_dataset = np.asarray(image_dataset)
+
+    data_path = os.path.join(image_path, exp_name + '.npy')
+    np.save(data_path, image_dataset)
+
     variant = dict(
         exp_name=exp_name,
         imsize=48,
         train_vae_variant=dict(
-            data_path='/home/dzp/samples_img_{}.npy'.format(exp_name),
+            data_path=data_path,
             imsize=48,
             representation_size=16,
             beta=100,
