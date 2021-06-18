@@ -137,9 +137,9 @@ if __name__ == "__main__":
         __file__.replace('/', '-').replace('_', '-').split('.')[0]
     )
 
-    n_seeds = 3
-    mode = 'ec2'
-    exp_prefix = 'rlkit-skew-fit-pusher-reference-sample-from-true-prior-take2'
+    # n_seeds = 3
+    # mode = 'ec2'
+    # exp_prefix = 'rlkit-skew-fit-pusher-reference-sample-from-true-prior-take2'
 
     for exp_id, variant in enumerate(sweeper.iterate_hyperparameters()):
         for _ in range(n_seeds):

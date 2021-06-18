@@ -25,7 +25,9 @@ def multitask_rollout(
         wrapped_fun = None
 
     def obs_processor(o):
-        return np.hstack((o[observation_key], o[desired_goal_key]))
+        # FIXME
+        # return np.hstack((o[observation_key], o[desired_goal_key]))
+        return o
 
     paths = rollout(
         env,
@@ -38,9 +40,11 @@ def multitask_rollout(
         full_o_postprocess_func=wrapped_fun,
     )
     if not return_dict_obs:
-        # FIXME
-        # print(observation_key, type(observation_key))  observation <class 'str'>
-        paths['observations'] = paths['observations'][observation_key]
+        # dzp: paths is a dict of np array, the only key for this dict is observations
+        # The np array contains K trajectory points, each is a dict with keys:
+        # observation, achieved_goal, and desired_goal.
+        pass
+        # paths['observations'] = paths['observations'][observation_key]
     return paths
 
 
