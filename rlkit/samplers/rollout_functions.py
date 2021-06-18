@@ -38,6 +38,8 @@ def multitask_rollout(
         full_o_postprocess_func=wrapped_fun,
     )
     if not return_dict_obs:
+        # FIXME
+        # print(observation_key, type(observation_key))  observation <class 'str'>
         paths['observations'] = paths['observations'][observation_key]
     return paths
 

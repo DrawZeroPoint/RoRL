@@ -9,3 +9,5 @@ MANIFEST
 \.idea/
 /dataset/
 /models/vae/
+data/
+/MUJOCO_LOG.TXT
