@@ -7,7 +7,6 @@ rlkit/launchers/conf_private.py
 MANIFEST
 *.egg-info
 \.idea/
-/dataset/
 /models/vae/
 data/
 /MUJOCO_LOG.TXT

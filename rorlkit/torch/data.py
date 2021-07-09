@@ -1,6 +1,10 @@
 import numpy as np
+
 import torch
 from torch.utils.data import Dataset, Sampler
+from torch_geometric.data import Data
+
+from rorlkit.torch.data_management import rosbag_data
 
 
 def normalize_image(image):
@@ -82,3 +86,50 @@ class InfiniteWeightedRandomSampler(Sampler):
 
     def __len__(self):
         return 2 ** 62
+
+
+class MotionGraphDataset(Dataset):
+    def __init__(self, db_len, bag_file, topic_list):
+        super(MotionGraphDataset, self).__init__()
+        self._db = []
+        self.pg = rosbag_data.PosesGetter('/home/smart/Documents/bagfile_stirfry/stir_fry_slow.bag',
+                                          ['/cartesian/left_hand/reference', '/cartesian/right_hand/reference'])
+        self._build_db(db_len)
+        self._db_len = db_len
+
+    def __len__(self):
+        return self._db_len
+
+    def __getitem__(self, item):
+        graph_curr, graph_next = self._db[item]
+        return graph_curr, graph_next
+
+    def _build_db(self, db_len):
+        random_idx_list = np.random.randint(low=0, high=self.pg.n_unit-1, size=db_len)
+        for idx in random_idx_list:
+            graphs = self._get_motion_graphs(idx)
+            self._db.append(graphs)
+
+    def _get_motion_graphs(self, idx):
+        """One frame of the graph is composed by: base link pose, left hand pose, right hand pose.
+        Get one graph for training and one for evaluation.
+
+        :param idx: int Starting index of the unit in the rollout.
+        """
+        edge_index = torch.tensor([[0, 0], [1, 2]], dtype=torch.long)
+        graphs = []
+        for i in range(2):
+            unit_idx = idx + i
+            # Get root node features
+            # TODO In a upper body fashion, we do not consider the movement of the base
+            base_pose_feature = rosbag_data.get_identity_feature()
+            # Get children features
+            left_hand_pose, right_hand_pose = self.pg.get_unit(unit_idx)
+            left_hand_feature = rosbag_data.pose_msg_to_feature(left_hand_pose)
+            right_hand_feature = rosbag_data.pose_msg_to_feature(right_hand_pose)
+            # Create node features
+            x = torch.tensor([base_pose_feature, left_hand_feature, right_hand_feature], dtype=torch.float)
+            # Create graph
+            data_i = Data(x=x, edge_index=edge_index)
+            graphs.append(data_i)
+        return graphs
