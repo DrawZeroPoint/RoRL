@@ -12,17 +12,18 @@ from rorlkit.torch.data import (
     MotionGraphDataset,
     InfiniteRandomSampler,
 )
-from rlkit.util.ml_util import ConstantSchedule
 
 
 class GNNTrainer(object):
     def __init__(
             self,
             model,
+            train_dataset_info,
+            test_dataset_info,
             batch_size=128,
             log_interval=10,
             lr=1e-3,
-            train_data_workers=2,
+            n_workers=2,
             weight_decay=0,
     ):
         model.to(ptu.device)
@@ -35,30 +36,42 @@ class GNNTrainer(object):
         params = list(self.model.parameters())
         self.optimizer = optim.Adam(params, lr=self.lr, weight_decay=weight_decay,)
 
-        self.train_data_workers = train_data_workers
-
-        self.dataset = MotionGraphDataset(10000)
-        self.dataloader = DataLoader(
-            self.dataset,
+        self.train_dataset = MotionGraphDataset(20000, **train_dataset_info)
+        self.train_dataloader = DataLoader(
+            self.train_dataset,
             batch_size=batch_size,
-            sampler=InfiniteRandomSampler(self.dataset),
+            sampler=InfiniteRandomSampler(self.train_dataset),
             drop_last=False,
-            num_workers=train_data_workers,
+            num_workers=n_workers,
             pin_memory=True,
         )
-        self.dataloader = iter(self.dataloader)
+        self.train_dataloader = iter(self.train_dataloader)
+
+        self.test_dataset = MotionGraphDataset(10000, **test_dataset_info)
+        self.test_dataloader = DataLoader(
+            self.test_dataset,
+            batch_size=batch_size,
+            sampler=InfiniteRandomSampler(self.test_dataset),
+            drop_last=False,
+            num_workers=n_workers,
+            pin_memory=True,
+        )
+        self.test_dataloader = iter(self.test_dataloader)
 
         self.eval_statistics = OrderedDict()
         self._extra_stats_to_log = None
 
-    def get_graph_batch(self):
-        graphs_curr, graphs_next = next(self.dataloader)
+    def get_graph_batch(self, is_training):
+        if is_training:
+            graphs_curr, graphs_next = next(self.train_dataloader)
+        else:
+            graphs_curr, graphs_next = next(self.test_dataloader)
         return graphs_curr, graphs_next
 
     def train_epoch(self, epoch):
         self.model.train()
         losses = []
-        graphs_curr, graphs_next = self.get_graph_batch()
+        graphs_curr, graphs_next = self.get_graph_batch(is_training=True)
         graphs_next_pred = self.model(graphs_curr)
         graphs_next_gt = graphs_next.x.reshape(graphs_next_pred.size())
 
@@ -84,12 +97,15 @@ class GNNTrainer(object):
         self.model.eval()
         losses = []
 
-        graphs_curr, graphs_next = self.get_graph_batch()
+        graphs_curr, graphs_next = self.get_graph_batch(is_training=False)
         graphs_next_pred = self.model(graphs_curr)
         graphs_next_gt = graphs_next.x.reshape(graphs_next_pred.size())
 
         loss = F.mse_loss(graphs_next_pred, graphs_next_gt)
         losses.append(loss.item())
+
+        if self.log_interval and epoch % self.log_interval == 0:
+            print('Test Epoch: {} \tLoss: {:.6f}'.format(epoch, loss.item()))
 
         self.eval_statistics['epoch'] = epoch
         self.eval_statistics['test/loss'] = np.mean(losses)

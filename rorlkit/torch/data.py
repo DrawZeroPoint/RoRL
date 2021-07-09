@@ -89,42 +89,48 @@ class InfiniteWeightedRandomSampler(Sampler):
 
 
 class MotionGraphDataset(Dataset):
-    def __init__(self, db_len, bag_file, topic_list):
+    def __init__(self, db_len, bag_file_list, topic_list):
         super(MotionGraphDataset, self).__init__()
+        self._n_bag = len(bag_file_list)
         self._db = []
-        self.pg = rosbag_data.PosesGetter('/home/smart/Documents/bagfile_stirfry/stir_fry_slow.bag',
-                                          ['/cartesian/left_hand/reference', '/cartesian/right_hand/reference'])
+        self.pg = rosbag_data.PosesGetter(bag_file_list, topic_list)
         self._build_db(db_len)
         self._db_len = db_len
 
     def __len__(self):
-        return self._db_len
+        return len(self._db)
 
     def __getitem__(self, item):
         graph_curr, graph_next = self._db[item]
         return graph_curr, graph_next
 
     def _build_db(self, db_len):
-        random_idx_list = np.random.randint(low=0, high=self.pg.n_unit-1, size=db_len)
-        for idx in random_idx_list:
-            graphs = self._get_motion_graphs(idx)
-            self._db.append(graphs)
+        for record_idx in range(self._n_bag):
+            msg_list = self.pg.msg_lists[record_idx]
+            n_unit = len(msg_list) // self.pg.n_topics
+            random_idx_list = np.random.randint(low=0, high=n_unit-1, size=db_len)
+            for unit_idx in random_idx_list:
+                graphs = self._get_motion_graphs(record_idx, unit_idx)
+                self._db.append(graphs)
+        print('Created database of length {}'.format(self.__len__()))
 
-    def _get_motion_graphs(self, idx):
+    def _get_motion_graphs(self, record_idx, unit_idx):
         """One frame of the graph is composed by: base link pose, left hand pose, right hand pose.
         Get one graph for training and one for evaluation.
 
-        :param idx: int Starting index of the unit in the rollout.
+        :param record_idx: int The index of the bag file.
+        :param unit_idx: int Starting index of the unit in the rollout.
         """
         edge_index = torch.tensor([[0, 0], [1, 2]], dtype=torch.long)
         graphs = []
+        # 2 is for getting the current and the next frames of the motion
         for i in range(2):
-            unit_idx = idx + i
+            _idx = unit_idx + i
             # Get root node features
             # TODO In a upper body fashion, we do not consider the movement of the base
             base_pose_feature = rosbag_data.get_identity_feature()
             # Get children features
-            left_hand_pose, right_hand_pose = self.pg.get_unit(unit_idx)
+            left_hand_pose, right_hand_pose = self.pg.get_unit(record_idx, _idx)
             left_hand_feature = rosbag_data.pose_msg_to_feature(left_hand_pose)
             right_hand_feature = rosbag_data.pose_msg_to_feature(right_hand_pose)
             # Create node features

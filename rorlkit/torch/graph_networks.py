@@ -29,7 +29,6 @@ class MotionGCN(nn.Module):
         self.n_vertices = n_vertices
         self.n_node_features = n_node_features
         self.n_nodes = n_frames * n_vertices
-        print(n_vertices, n_frames, n_node_features)
         # Create the input graph convolution layer
         self.input_layer = GCNConv(n_node_features, 16)
         # Create the hidden graph convolution layer

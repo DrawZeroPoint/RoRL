@@ -61,33 +61,48 @@ def get_identity_feature():
 class PosesGetter(object):
     def __init__(
             self,
-            file_name,
+            bag_files,
             topics=None
     ):
+        if not isinstance(bag_files, list):
+            raise TypeError('bag files are not given as a list')
         if not isinstance(topics, list):
             raise TypeError('topics are not given as a list')
-        self._msg_list = []
-        self._read_bag(file_name, topics)
-        self._n_topics = len(topics)
-        self.n_unit = len(self._msg_list) // len(topics)
 
-    def _read_bag(self, file_name, topics):
-        bag = rosbag.Bag(file_name)
+        self.msg_lists = []
+        for bag_path in bag_files:
+            msg_list = self._read_bag(bag_path, topics)
+            self.msg_lists.append(msg_list)
+
+        self.n_topics = len(topics)
+
+    @staticmethod
+    def _read_bag(file_path, topics):
+        msg_list = []
+        bag = rosbag.Bag(file_path)
         for topic, msg, t in bag.read_messages(topics):
-            self._msg_list.append(msg)
+            msg_list.append(msg)
         bag.close()
+        return msg_list
 
-    def get_unit(self, idx):
-        """A unit is defined as a segment in the msg_list containing one of each topic msgs.
+    def get_unit(self, record_idx, unit_idx):
+        """A unit is defined as a segment containing one of each topic msgs.
 
-        :param idx: int The index of the unit to get, should be within the range [0, n_unit)
+        :param record_idx: int The index of the bag file
+        :param unit_idx: int The index of the unit to get, should be within the range [0, n_unit)
+        :return: list A list containing all topics' messages in a unit
         """
-        if idx < 0 or idx >= self.n_unit:
-            raise ValueError('idx is not legal')
+        if record_idx < 0 or record_idx >= len(self.msg_lists):
+            raise ValueError('record idx {} is not legal'.format(record_idx))
+
+        msg_list = self.msg_lists[record_idx]
+        n_unit = len(msg_list) // self.n_topics
+        if unit_idx < 0 or unit_idx >= n_unit:
+            raise ValueError('unit idx is not legal')
 
         output_list = []
-        for i in range(self._n_topics):
-            msg_i = self._msg_list[idx * self._n_topics + i]
+        for i in range(self.n_topics):
+            msg_i = msg_list[unit_idx * self.n_topics + i]
             pose_msg = PoseStamped()
             pose_msg.pose = msg_i.pose
             output_list.append(pose_msg)

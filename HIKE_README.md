@@ -40,5 +40,5 @@ pip install rosbag
 ## How to use
 
 The training script is [train_motion_graph](scripts/train_motion_graph.py), before using this, you may need to modify 
-the data relevant setting in [data](rorlkit/torch/data.py).
+the data relevant setting as defined in `train_dataset_info` and `test_dataset_info`.
 
