@@ -106,8 +106,8 @@ class MotionGraphDataset(Dataset):
 
     def _build_db(self, db_len):
         for record_idx in range(self._n_bag):
-            msg_list = self.pg.msg_lists[record_idx]
-            n_unit = len(msg_list) // self.pg.n_topics
+            msg_dict = self.pg.msg_dict_lists[record_idx]
+            n_unit = msg_dict[self.pg.unit_key]
             random_idx_list = np.random.randint(low=0, high=n_unit-1, size=db_len)
             for unit_idx in random_idx_list:
                 graphs = self._get_motion_graphs(record_idx, unit_idx)

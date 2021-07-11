@@ -19,7 +19,7 @@ test_dataset_info = {
 model = MotionGCN(batch_size=128, is_training=True, n_vertices=3, n_frames=1, n_node_features=9)
 trainer = GNNTrainer(model, train_dataset_info, test_dataset_info)
 
-for epoch in range(5000):
+for epoch in range(1000):
     trainer.train_epoch(epoch)
     trainer.test_epoch(
         epoch,

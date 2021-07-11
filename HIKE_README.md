@@ -34,7 +34,7 @@ pip install torch-scatter torch-sparse torch-cluster torch-spline-conv torch-geo
 #### Other Python packages may need
 
 ```shell
-pip install rosbag
+pip install rosbag pycryptodomex python-gnupg
 ```
 
 ## How to use

@@ -62,49 +62,76 @@ class PosesGetter(object):
     def __init__(
             self,
             bag_files,
-            topics=None
+            topics
     ):
         if not isinstance(bag_files, list):
             raise TypeError('bag files are not given as a list')
         if not isinstance(topics, list):
             raise TypeError('topics are not given as a list')
-
-        self.msg_lists = []
-        for bag_path in bag_files:
-            msg_list = self._read_bag(bag_path, topics)
-            self.msg_lists.append(msg_list)
-
+        self.topics = topics
         self.n_topics = len(topics)
+        self.unit_key = 'n_unit'
+        # This list contains dicts, one for each bag file. The keys of the dict are topics plus unit_key
+        self.msg_dict_lists = []
+        for bag_path in bag_files:
+            msg_dict = self._read_bag(bag_path, topics)
+            self.msg_dict_lists.append(msg_dict)
 
-    @staticmethod
-    def _read_bag(file_path, topics):
-        msg_list = []
+    def _read_bag(self, file_path, topics):
+        """Read the bag file given by the file_path, and put msgs for each topic in respective key of the dict
+
+        """
+        n_unit = 2 ** 62
+        msg_dict = {}
         bag = rosbag.Bag(file_path)
-        for topic, msg, t in bag.read_messages(topics):
-            msg_list.append(msg)
+        for topic in topics:
+            msg_list = []
+            for _, msg, _ in bag.read_messages(topic):
+                msg_list.append(msg)
+            if len(msg_list) < n_unit:
+                n_unit = len(msg_list)
+            msg_dict[topic] = msg_list
+        msg_dict[self.unit_key] = n_unit
         bag.close()
-        return msg_list
+        return msg_dict
 
     def get_unit(self, record_idx, unit_idx):
-        """A unit is defined as a segment containing one of each topic msgs.
+        """A unit is defined as a set containing one of each topic msgs.
+        These messages have similar timestamps that could be treated as captured concurrently.
 
-        :param record_idx: int The index of the bag file
+        :param record_idx: int The index of the bag file.
         :param unit_idx: int The index of the unit to get, should be within the range [0, n_unit)
         :return: list A list containing all topics' messages in a unit
         """
-        if record_idx < 0 or record_idx >= len(self.msg_lists):
+        if record_idx < 0 or record_idx >= len(self.msg_dict_lists):
             raise ValueError('record idx {} is not legal'.format(record_idx))
 
-        msg_list = self.msg_lists[record_idx]
-        n_unit = len(msg_list) // self.n_topics
+        msg_dict = self.msg_dict_lists[record_idx]
+        n_unit = msg_dict[self.unit_key]
         if unit_idx < 0 or unit_idx >= n_unit:
             raise ValueError('unit idx is not legal')
 
         output_list = []
         for i in range(self.n_topics):
-            msg_i = msg_list[unit_idx * self.n_topics + i]
+            msg_i = msg_dict[self.topics[i]][unit_idx]
             pose_msg = PoseStamped()
             pose_msg.pose = msg_i.pose
             output_list.append(pose_msg)
         return output_list
 
+    def get_xyz(self, record_idx, topic_idx, start=0, end=None):
+        msg_dict = self.msg_dict_lists[record_idx]
+        msg_list = msg_dict[self.topics[topic_idx]]
+        x = []
+        y = []
+        z = []
+        for i in range(len(msg_list)):
+            if i < start:
+                continue
+            if end is not None and i >= end:
+                break
+            msg_i = msg_list[i]
+            x.append(msg_i.pose.position.x)
+            y.append(msg_i.pose.position.y)
+            z.append(msg_i.pose.position.z)
+        return x, y, z
